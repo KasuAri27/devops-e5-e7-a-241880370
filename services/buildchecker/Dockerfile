@@ -12,8 +12,12 @@ ENV LC_ALL=C.UTF-8 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-RUN apt-get update \
- && apt-get install -y --no-install-recommends gcc make libc6-dev strace git \
+RUN apt-get -o Acquire::Retries=5 update \
+ && for attempt in 1 2 3; do \
+      apt-get -o Acquire::Retries=5 install -y --no-install-recommends gcc make libc6-dev strace git && break; \
+      [ "$attempt" -lt 3 ] || exit 1; \
+      sleep 2; \
+    done \
  && rm -rf /var/lib/apt/lists/* \
  && dpkg-query -W -f='${Package}=${Version}\n' gcc make libc6-dev strace git > /opt/toolchain.lock \
  && echo "python3=$(python3 -c 'import platform; print(platform.python_version())')" >> /opt/toolchain.lock \
