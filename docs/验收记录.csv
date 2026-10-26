@@ -1,9 +1,9 @@
 编号,轨道,阶段,项目,状态,证据路径或URL,说明
-C01,共同,环境,云主机与Docker,FAIL,work/environment-01/env.json,镜像和容器已跑通；MemTotal 3.5 GiB低于doctor最低4 GiB；直连Docker Hub仍需网络路径
-C02,共同,E5,真实复现与差异,PASS,work/e5-01/evidence/,程序输出1；trace与Make数据库均保留；教学范围已说明
-C03,共同,E6,输入哈希报告日志,PASS,work/driver-01/e6-verify.log,仅Makefile哈希变化；修复前2条修复后0条
-C04,共同,E7,自主扩展测试,PASS,services/buildchecker/tests/test_generated_header.py,AI协助新增生成头文件跨任务依赖测试；最终16项服务测试通过；待学生复核
-C05,共同,CI,正常失败恢复及artifact,PENDING,,尚未执行GitHub CI
-C06,共同,CI,必需检查与实际拒绝合并,PENDING,,尚未配置分支保护及验证合并拦截
-A01,A,E6,MD/RD精确证据与修复,PASS,work/driver-02/raw-evidence-validation.json,原始trace行与进程归属及声明行已独立核对
-A02,A,E7,三次一致及故障场景,PASS,work/e7-02/gate/gate-result.json,八项检查全部通过；包含三次原始检测及修复失败多输出超时
+C01,共同,环境,云主机与Docker,FAIL,work/environment-01/env.json,镜像与实验已跑通；MemTotal 3.5 GiB低于doctor最低4 GiB；网络路径已记录
+C02,共同,E5,真实复现与差异,PASS,work/e5-01/evidence/,程序输出1；原始trace与声明均保留
+C03,共同,E6,输入哈希报告日志,PASS,work/driver-01/e6-verify.log,仅Makefile变化；修复前2条修复后0条
+C04,共同,E7,自主扩展测试,PASS,services/buildchecker/tests/test_generated_header.py,生成头文件扩展测试已通过；最终17项含独立CI版本测试；AI协助范围已披露
+C05,共同,CI,正常失败恢复及artifact,PASS,work/ci-recovery-01/summary.json,正常40179739134；失败40179963889；恢复40261914861；三份artifact均已下载
+C06,共同,CI,必需检查与实际拒绝合并,PASS,work/ci-rejection-01/merge-rejection.log,App15368绑定必需检查；strict和管理员约束开启；失败时拒绝退出1；恢复普通合并成功
+A01,A,E6,MD/RD精确证据与修复,PASS,work/driver-02/raw-evidence-validation.json,trace进程归属与声明行已核对
+A02,A,E7,三次一致及故障场景,PASS,work/e7-03/gate/gate-result.json,最终17项服务测试与八项门禁通过
