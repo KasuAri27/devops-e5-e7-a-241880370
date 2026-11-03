@@ -45,17 +45,29 @@ def declarations(p):
         graph[target]=sorted(set(dep.split()))
     return graph,variables.get('CFLAGS','')
 
-def scan(p, old=None):
+def can_reuse_target(target, key, old, selective=False):
+    if not old or target not in old.get('actual',{}):
+        return False
+    if not selective:
+        return old.get('key')==key
+    old_key=old.get('key',{})
+    if any(old_key.get(k)!=key.get(k) for k in ['recipes','flags','compiler']):
+        return False
+    old_dirs=old_key.get('directives',{})
+    cur_dirs=key.get('directives',{})
+    return all(dep in cur_dirs and cur_dirs[dep]==old_dirs.get(dep) for dep in old['actual'][target])
+
+def scan(p, old=None, selective=False):
     start=time.perf_counter(); declared,flags=declarations(p)
     if flags not in ['-O0','-O1','-O0 -DMODE=1']: raise ValueError('UNSUPPORTED_FLAGS')
-    # Conservative invalidation: all local preprocessor lines, source set and recipes.
+    # Conservative invalidation by default; optional target-closure invalidation when selective=True.
     files={x.name:x.read_text() for x in sorted(p.glob('*')) if x.suffix in ['.c','.h']}
     key={'directives':{n:[l for l in t.splitlines() if l.lstrip().startswith('#')] for n,t in files.items()},
          'recipes':[l for l in (p/'Makefile').read_text().splitlines() if l.startswith('\t')],
          'flags':flags,'compiler':run(['gcc','--version'],p).splitlines()[0]}
     actual={}; refreshed=[]; reused=[]
     for target,source in [('main.o','main.c'),('helper.o','helper.c')]:
-        if old and old['key']==key and target in old['actual']:
+        if can_reuse_target(target,key,old,selective=selective):
             actual[target]=old['actual'][target]; reused.append(target)
         else:
             output=run(['gcc',*flags.split(),'-MM','-MT',target,source],p)
